@@ -5,7 +5,7 @@ import {
   CardTitle
 } from 'reactstrap';
 
-export class Menu extends Component {
+class Menu extends Component {
 
   constructor(props) {
     super(props)
@@ -14,6 +14,12 @@ export class Menu extends Component {
       //defining as a javascript object containing a list of dishes
       selectedDish: null
     }
+    console.log('Menu component constructor called')
+  }
+
+  //Adding a life cycle method
+  componentDidMount() {
+    console.log('Menu component componentDidMount called')
   }
 
   onDishSelect(dish) {
@@ -73,9 +79,9 @@ export class Menu extends Component {
         </div>
       )
     });
-
+    console.log('Menu component render is invoked!')
     return (
-      <div className="container">
+      <div className="container" >
         <div className='row'>
           {/*using javascript code within JSX using the {}*/}
           {menu}
