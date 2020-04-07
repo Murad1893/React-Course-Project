@@ -1,9 +1,10 @@
 import React, { Component } from 'react'
 import { Media, NavItem } from 'reactstrap'
 import {
-  Card, CardImg, CardImgOverlay, CardText, CardBody,
+  Card, CardImg, CardImgOverlay,
   CardTitle
 } from 'reactstrap';
+import Dishdetail from './DishdetailComponent'
 
 class Menu extends Component {
 
@@ -27,26 +28,6 @@ class Menu extends Component {
     this.setState({
       selectedDish: dish //this will ensure that the selectedDish will be equal to dish on selection
     })
-  }
-
-  renderDish(dish) {
-    if (dish != null) {
-      //we are now rendering the dish in a different way
-      return (
-        <Card>
-          <CardImg width='100%' src={dish.image} alt={dish.name} />
-          <CardBody>
-            <CardTitle>{dish.name}</CardTitle>
-            <CardText>{dish.description}</CardText>
-          </CardBody>
-        </Card>
-      )
-    }
-    else {
-      return (
-        <div></div>
-      )
-    }
   }
 
   render() {
@@ -86,12 +67,9 @@ class Menu extends Component {
           {/*using javascript code within JSX using the {}*/}
           {menu}
         </div>
-        <div className='row'>
-          <div className="col-12 col-md-5 m-1">
-            {this.renderDish(this.state.selectedDish)}
-          </div>
-        </div>
+        <Dishdetail dish={this.state.selectedDish} />
       </div>
+
     )
   }
 }
