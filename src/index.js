@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
+import 'bootstrap/dist/css/bootstrap.min.css'; //importing bootstrap first
+import './index.css'; //then we import css so that we can overwrite the functionality using our css class
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 
