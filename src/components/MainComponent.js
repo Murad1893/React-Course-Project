@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import { Navbar, NavbarBrand } from 'reactstrap'
 import Menu from './MenuComponent' //importing my menu component
 import '../App.css';
 import Dishdetail from './DishdetailComponent'
 import { DISHES } from '../shared/dishes'
+import Header from './HeaderComponent'
+import Footer from './FooterComponent'
 
 //This is a container component handling all the state and passing it onto presentational components in order for them to display
 class Main extends Component {
@@ -28,17 +29,14 @@ class Main extends Component {
   render() {
     return (
       <div>
-        <Navbar dark color="primary">
-          <div className="container">
-            <NavbarBrand href="/">Ristorante Con Fusion</NavbarBrand>
-          </div>
-        </Navbar>
+        <Header></Header>
         {/**passing the dishes and onClick method as props to the Menu component */}
         <Menu dishes={this.state.dishes} onClick={(dishId) => { this.onDishSelect(dishId) }} /> {/**now we can pass the state as props to child component of App */}
         {/**this helps to filter out all the dishes for which the dishId matches the selectedDish */}
         <Dishdetail dish={this.state.dishes.filter((dish) =>
           dish.id === this.state.selectedDish
         )[0]}></Dishdetail>
+        <Footer></Footer>
       </div>
     )
   }
