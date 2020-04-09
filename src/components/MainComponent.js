@@ -12,6 +12,7 @@ import Home from './HomeComponent'
 import { Switch, Route, Redirect } from 'react-router-dom'
 import Contact from './ContactComponent'
 import DishDetail from './DishdetailComponent';
+import About from './AboutComponent'
 
 
 //This is a container component handling all the state and passing it onto presentational components in order for them to display
@@ -68,6 +69,7 @@ class Main extends Component {
           <Route exact path='/menu' component={() => <Menu dishes={this.state.dishes}></Menu>} /> {/**here route should match the exact pathname */}
           <Route path='/menu/:dishId' component={DishWithId}></Route>
           {/**when the above routes are not matched the user is redirected to a default page */}
+          <Route exact path='/aboutus' component={() => <About leaders={this.state.leaders}></About>}></Route>
           <Route exact path='/contactus' component={Contact}></Route>
           <Redirect to='/home'></Redirect> {/**default redirection to home */}
         </Switch>
