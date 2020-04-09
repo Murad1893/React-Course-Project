@@ -2,11 +2,12 @@ import React from 'react'
 import { Media, NavItem } from 'reactstrap'
 import {
   Card, CardImg, CardImgOverlay,
-  CardTitle
+  CardTitle, Breadcrumb, BreadcrumbItem
 } from 'reactstrap';
+import { Link } from 'react-router-dom'
 
 //Functional Component that will render the view
-function RenderMenuItem({ dish, onClick }) {
+function RenderMenuItem({ dish }) {
 
   /*this classifies that each media tag will act as a list item*/
   /* <Media tag='li'>
@@ -22,13 +23,14 @@ function RenderMenuItem({ dish, onClick }) {
 
   return (
 
-    <Card onClick={() => {
-      onClick(dish.id)
-    }}>
-      <CardImg width='100%' src={dish.image} alt={dish.name} />
-      <CardImgOverlay>
-        <CardTitle>{dish.name}</CardTitle>
-      </CardImgOverlay>
+    <Card>
+      {/*for each corresponsing dish the corresponding link would be rendered*/}
+      <Link to={`/menu/${dish.id}`}>
+        <CardImg width='100%' src={dish.image} alt={dish.name} />
+        <CardImgOverlay>
+          <CardTitle>{dish.name}</CardTitle>
+        </CardImgOverlay>
+      </Link>
     </Card>
   )
 }
@@ -44,13 +46,23 @@ const Menu = (props) => {
       //Whenever we render a list of items then we must assign it a key property to each items <div key={dish.id} className="col-12 mt-5">
 
       <div key={dish.id} className="col-12 col-md-5 m-1">
-        <RenderMenuItem dish={dish} onClick={props.onClick}></RenderMenuItem>
+        <RenderMenuItem dish={dish}></RenderMenuItem>
       </div>
     )
   });
   console.log('Menu component render is invoked!')
   return (
     <div className="container" >
+      <div className='row'>
+        <Breadcrumb>
+          <BreadcrumbItem><Link to='/home'>Home</Link></BreadcrumbItem>
+          <BreadcrumbItem active>Menu</BreadcrumbItem>
+        </Breadcrumb>
+        <div className='col-12'>
+          <h3>Menu</h3>
+          <hr />
+        </div>
+      </div>
       <div className='row'>
         {/*using javascript code within JSX using the {}*/}
         {menu}
