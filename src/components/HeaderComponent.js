@@ -1,5 +1,9 @@
 import React, { Component } from 'react'
-import { Nav, Navbar, NavbarBrand, NavbarToggler, Collapse, NavItem, Jumbotron } from 'reactstrap'
+import {
+  Navbar, NavbarBrand, Nav, NavbarToggler, Collapse, NavItem, Jumbotron,
+  Button, Modal, ModalHeader, ModalBody,
+  Form, FormGroup, Input, Label
+} from 'reactstrap'
 import { NavLink } from 'react-router-dom';
 
 export class Header extends Component {
@@ -9,16 +13,32 @@ export class Header extends Component {
     super(props);
 
     this.state = {
-      isNavOpen: false
+      isNavOpen: false,
+      isModalOpen: false //this will keep track of whether the modal is open or not
     }
 
     this.toggleNav = this.toggleNav.bind(this) //we could either specify it as an arrow function in onClick = {()=>..} or we can bind like this
+    this.toggleModal = this.toggleModal.bind(this)
+    this.handleLogin = this.handleLogin.bind(this)
   }
 
   toggleNav() {
     this.setState({
       isNavOpen: !this.state.isNavOpen //we are negating the value over here
     })
+  }
+
+  //same as toggleNav
+  toggleModal() {
+    this.setState({
+      isModalOpen: !this.state.isModalOpen //we are negating the value over here
+    })
+  }
+
+  handleLogin(event) { //this recevies the information in the event
+    this.toggleModal() //closing the modal once we want to handle login
+    alert("Username: " + this.username.value + " Password: " + this.password.value + " Remember: " + this.remember.checked)
+    event.preventDefailt();
   }
 
   render() {
@@ -60,6 +80,12 @@ export class Header extends Component {
                 </NavLink>
                 </NavItem>
               </Nav>
+              {/* this ml-auto will push this button to the right */}
+              <Nav className='ml-auto' navbar>
+                <NavItem>
+                  <Button onClick={this.toggleModal}><span className='fa fa-sign-in fa-lg'></span> Login</Button>
+                </NavItem>
+              </Nav>
             </Collapse>
           </div>
         </Navbar>
@@ -73,6 +99,29 @@ export class Header extends Component {
             </div>
           </div>
         </Jumbotron>
+        {/* same as the modal we used in bootstrap 
+        UNCONTROLLED FORMS --------- for this we will user innerRef in order to extract values from the DOM state*/}
+        <Modal isOpen={this.state.isModalOpen} toggle={this.toggleModal}>
+          <ModalHeader>Login Modal</ModalHeader>
+          <ModalBody>
+            <Form onSubmit={this.handleLogin}>
+              <FormGroup>
+                <Label htmlFor='username'>Username</Label>
+                <Input type='text' id='username' name='username' innerRef={(input) => this.username = input}></Input>
+              </FormGroup>
+              <FormGroup>
+                <Label htmlFor='password'>Password</Label>
+                <Input type='password' id='password' name='password' innerRef={(input) => this.password = input}></Input>
+              </FormGroup>
+              <FormGroup check>
+                <Label check>
+                  <Input type="checkbox" name="remember" innerRef={(input) => this.remember = input} /> Remember me
+                </Label>
+              </FormGroup>
+              <Button type='submit' value='submit' color='primary'>Login</Button>
+            </Form>
+          </ModalBody>
+        </Modal>
       </>
     )
   }

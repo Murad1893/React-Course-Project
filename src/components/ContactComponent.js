@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Breadcrumb, BreadcrumbItem, Button, Form, FormGroup, Label, Input, Col } from 'reactstrap'
+import { Breadcrumb, BreadcrumbItem, Button, Form, FormGroup, Label, Input, Col, FormFeedback } from 'reactstrap'
 import { Link } from 'react-router-dom'
 
 
@@ -15,7 +15,14 @@ class Contact extends Component {
       email: '',
       agree: false,
       contactType: 'Tel.', //this will be used for the form control
-      message: ''
+      message: '',
+      //this is done to ensure that the user has touched this or not. Else no use of validation
+      touched: { //this if for the form validation
+        firstname: false,
+        lastname: false,
+        telnum: false,
+        email: false
+      }
     }
     this.handleInputChange = this.handleInputChange.bind(this); //binding instead of using arrow function
     //this.handleSubmit = this.handleSubmit.bind(this);
@@ -39,7 +46,56 @@ class Contact extends Component {
     event.preventDefault();
   }
 
+  //method for form validation
+  //will also receive the corresponding event in here
+  handleBlur = field => (evt) => {
+    this.setState({
+      touched: { ...this.state.touched, [field]: true }
+    })
+  }
+
+  //method for validation
+  validate = (firstname, lastname, telnum, email) => {
+    const errors = {
+      firstname: '',
+      lastname: '',
+      telnum: '',
+      email: ''
+    }
+
+    //now we check whether touched and satisfy a certain condition
+    //Firstname
+    if (this.state.touched.firstname && this.state.firstname.length < 3)
+      errors.firstname = 'First name should not be less than 3 characters'
+    else if (this.state.touched.firstname && this.state.firstname.length > 10)
+      errors.firstname = 'First name should not be more than 10 characters'
+
+    //Lastname
+    if (this.state.touched.lastname && this.state.lastname.length < 3)
+      errors.lastname = 'Last name should not be less than 3 characters'
+    else if (this.state.touched.lastname && this.state.lastname.length > 10)
+      errors.lastname = 'Last name should not be more than 10 characters'
+
+    //Telnum
+    const reg = /^\d+$/; //checking that the field contains all the numbers
+    if (this.state.touched.telnum && !reg.test(this.state.telnum))
+      errors.telnum = 'Telephone number should only contain numbers'
+
+    //Email
+    //this checks that whether there is '@' present or not
+    if (this.state.touched.email && this.state.email.split('').filter((x) => x === '@').length !== 1)
+      errors.email = 'Email should contain a @ character'
+
+    return errors //after setting the errors object appropriately we return it
+  }
+
   render() {
+
+    //collecting all the fields errors if any before rendering
+    const errors = this.validate(this.state.firstname, this.state.lastname, this.state.telnum, this.state.email);
+
+    console.log(errors)
+
     return (
       <div className="container">
         <div className='row'>
@@ -92,7 +148,8 @@ class Contact extends Component {
                 {/* instead of col-md-10 we can also use like this */}
                 <Col md={10}>
                   {/* by setting the value we are tying this to the state firstname */}
-                  <Input type='text' id='firstname' name='firstname' placeholder='First Name' value={this.state.firstname} onChange={this.handleInputChange} />
+                  <Input type='text' id='firstname' name='firstname' placeholder='First Name' valid={errors.firstname === ''} invalid={errors.firstname !== ''} value={this.state.firstname} onChange={this.handleInputChange} onBlur={this.handleBlur('firstname')} />
+                  <FormFeedback>{errors.firstname}</FormFeedback>
                 </Col>
               </FormGroup>
               <FormGroup row>
@@ -101,8 +158,8 @@ class Contact extends Component {
                 <Label htmlFor='lastname' md={2}>Last Name</Label>
                 {/* instead of col-md-10 we can also use like this */}
                 <Col md={10}>
-                  {/* by setting the value we are tying this to the state firstname */}
-                  <Input type='text' id='lastname' name='lastname' placeholder='Last Name' value={this.state.lastname} onChange={this.handleInputChange} />
+                  <Input type='text' id='lastname' name='lastname' placeholder='Last Name' valid={errors.lastname === ''} invalid={errors.lastname !== ''} value={this.state.lastname} onChange={this.handleInputChange} onBlur={this.handleBlur('lastname')} />
+                  <FormFeedback>{errors.lastname}</FormFeedback>
                 </Col>
               </FormGroup>
               <FormGroup row>
@@ -111,8 +168,8 @@ class Contact extends Component {
                 <Label htmlFor='telnum' md={2}>Contact Tel.</Label>
                 {/* instead of col-md-10 we can also use like this */}
                 <Col md={10}>
-                  {/* by setting the value we are tying this to the state firstname */}
-                  <Input type='tel' id='telnum' name='telnum' placeholder='Tel. Number' value={this.state.telnum} onChange={this.handleInputChange} />
+                  <Input type='tel' id='telnum' name='telnum' placeholder='Tel. Number' valid={errors.telnum === ''} invalid={errors.telnum !== ''} value={this.state.telnum} onChange={this.handleInputChange} onBlur={this.handleBlur('telnum')} />
+                  <FormFeedback>{errors.telnum}</FormFeedback>
                 </Col>
               </FormGroup>
               <FormGroup row>
@@ -121,8 +178,8 @@ class Contact extends Component {
                 <Label htmlFor='email' md={2}>Email</Label>
                 {/* instead of col-md-10 we can also use like this */}
                 <Col md={10}>
-                  {/* by setting the value we are tying this to the state firstname */}
-                  <Input type='email' id='email' name='email' placeholder='Email' value={this.state.email} onChange={this.handleInputChange} />
+                  <Input type='email' id='email' name='email' placeholder='Email' valid={errors.email === ''} invalid={errors.email !== ''} value={this.state.email} onChange={this.handleInputChange} onBlur={this.handleBlur('email')} />
+                  <FormFeedback>{errors.email}</FormFeedback>
                 </Col>
               </FormGroup>
               <FormGroup row>
