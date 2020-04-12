@@ -12,7 +12,7 @@ export const initialState = {
 }
 
 //making our reducer function
-//this will receive a current state and action in order to change the state and pass it as a new object
+//this will receive a current state and action in order to change the state and pass it as a new state
 //when the reducer is first called we are keeping it equal to initialState
 export const Reducer = (state = initialState, action) => {
 
