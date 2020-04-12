@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import Menu from './MenuComponent' //importing my menu component
 import '../App.css';
-import Dishdetail from './DishdetailComponent'
 //commented because now our component will obtain all from ouyr redux store
 // import { DISHES } from '../shared/dishes'
 // import { COMMENTS } from '../shared/comments'
@@ -15,7 +14,7 @@ import Contact from './ContactComponent'
 import DishDetail from './DishdetailComponent';
 import About from './AboutComponent'
 import { connect } from 'react-redux'
-import { addComment } from '../redux/ActionCreators'
+import { addComment, fetchDishes } from '../redux/ActionCreators'
 
 
 //Main needs to take in the state from the store
@@ -31,7 +30,8 @@ const mapStateToProps = state => {
 
 //this will receive dispatch as the property here, 
 const mapDispatchToProps = (dispatch) => ({
-  addComment: (dishId, rating, author, comment) => dispatch(addComment(dishId, rating, author, comment))
+  addComment: (dishId, rating, author, comment) => dispatch(addComment(dishId, rating, author, comment)),
+  fetchDishes: () => { dispatch(fetchDishes()) } //this allows the fetchDishes action be available to my component 
 })
 
 //This is a container component handling all the state and passing it onto presentational components in order for them to display
@@ -39,16 +39,22 @@ class Main extends Component {
 
   //AS ALL THE STATE IS AVAILABLE IN THE STORE HENCE WE USE this.props INSTEAD OF THIS.STATE
 
-  constructor(props) {
-    super(props);
+  // constructor(props) {
+  //   super(props);
 
-    // this.state = {//over here we can define variables related to this component
-    //   //defining as a javascript object containing a list of dishes
-    //   dishes: DISHES,//now we have lifted all the information into the parent component
-    //   comments: COMMENTS,
-    //   promotions: PROMOTIONS,
-    //   leaders: LEADERS
-    // };
+  //   // this.state = {//over here we can define variables related to this component
+  //   //   //defining as a javascript object containing a list of dishes
+  //   //   dishes: DISHES,//now we have lifted all the information into the parent component
+  //   //   comments: COMMENTS,
+  //   //   promotions: PROMOTIONS,
+  //   //   leaders: LEADERS
+  //   // };
+  // }
+
+  //this will be called when the component is mounted
+  componentDidMount() {
+    //good time for fetching the Dishes
+    this.props.fetchDishes();
   }
 
   onDishSelect(dishId) {
@@ -64,7 +70,9 @@ class Main extends Component {
     const HomePage = () => {
       return (
         <Home
-          dish={this.props.dishes.filter((dish) => dish.featured)[0]}
+          dish={this.props.dishes.dishes.filter((dish) => dish.featured)[0]}
+          dishesLoading={this.props.dishes.isLoading}
+          dishesErrMessage={this.props.dishes.err}
           promotion={this.props.promotions.filter((promo) => promo.featured)[0]}
           leader={this.props.leaders.filter((leader) => leader.featured)[0]}
         />
@@ -76,7 +84,9 @@ class Main extends Component {
       return (
         //we will receive a string here from the params and hence we will convert this into a base 10 integer
         //this.props has been used for addComment because we have mapDisptachToProps
-        <DishDetail dish={this.props.dishes.filter((dish) => dish.id === parseInt(match.params.dishId, 10))[0]}
+        <DishDetail dish={this.props.dishes.dishes.filter((dish) => dish.id === parseInt(match.params.dishId, 10))[0]}
+          isLoading={this.props.dishes.isLoading}
+          errMessage={this.props.dishes.err}
           comments={this.props.comments.filter((comment) => comment.dishId === parseInt(match.params.dishId, 10))}
           addComment={this.props.addComment}>
         </DishDetail>

@@ -5,6 +5,7 @@ import {
 } from 'reactstrap';
 import { Link } from 'react-router-dom'
 import { Control, LocalForm, Errors } from 'react-redux-form';
+import { Loading } from './LoadingComponent'
 
 const maxLength = (len) => (val) => !(val) || (val.length <= len); //check and make sure that length is within a range
 const minLength = (len) => (val) => val && (val.length >= len); //same as maxLength
@@ -145,9 +146,32 @@ function RenderComments({ comments, addComment, dishId }) {
 
 const DishDetail = props => {
 
+  //we are passing the isLoading and errMessage in the DishDetail component in props
+
   console.log('DishDetail render() invoked')
 
-  if (props.dish != null) {
+  //so we check that whether the property is being loaded
+  if (props.isLoading) {
+    return (
+      <div className='container'>
+        <div className='row'>
+          <Loading></Loading>
+        </div>
+      </div>
+    )
+  }
+
+  else if (props.errMessage) {
+    return (
+      <div className='container'>
+        <div className='row'>
+          <h4>{props.errMessage}</h4>
+        </div>
+      </div>
+    )
+  }
+
+  else if (props.dish != null) {
     return (
       <div className='container'>
         <div className='row'>

@@ -1,10 +1,10 @@
 import React from 'react'
-import { Media, NavItem } from 'reactstrap'
 import {
   Card, CardImg, CardImgOverlay,
   CardTitle, Breadcrumb, BreadcrumbItem
 } from 'reactstrap';
 import { Link } from 'react-router-dom'
+import { Loading } from './LoadingComponent'
 
 //Functional Component that will render the view
 function RenderMenuItem({ dish }) {
@@ -39,7 +39,7 @@ function RenderMenuItem({ dish }) {
 
 const Menu = (props) => {
   //when we want to refer any value from the state, we can use this.state
-  const menu = props.dishes.map(dish => { //now as this is a functional component we can now use props instead of this.props
+  const menu = props.dishes.dishes.map(dish => { //now as this is a functional component we can now use props instead of this.props
     //iterating over the javascript object
     return (
       //key helps react to identify each element in this component uniquely while rendering
@@ -50,26 +50,51 @@ const Menu = (props) => {
       </div>
     )
   });
+
   console.log('Menu component render is invoked!')
-  return (
-    <div className="container" >
-      <div className='row'>
-        <Breadcrumb>
-          <BreadcrumbItem><Link to='/home'>Home</Link></BreadcrumbItem>
-          <BreadcrumbItem active>Menu</BreadcrumbItem>
-        </Breadcrumb>
-        <div className='col-12'>
-          <h3>Menu</h3>
-          <hr />
+
+  if (props.dishes.isLoading) {
+    return (
+      <div className='container'>
+        <div className='row'>
+          <Loading></Loading>
         </div>
       </div>
-      <div className='row'>
-        {/*using javascript code within JSX using the {}*/}
-        {menu}
-      </div>
-    </div>
+    )
+  }
 
-  )
+  else if (props.dishes.errMessage) {
+    return (
+      <div className='container'>
+        <div className='row'>
+          <h4>{props.errMessage}</h4>
+        </div>
+      </div>
+    )
+  }
+
+  else {
+    return (
+      <div className="container" >
+        <div className='row'>
+          <Breadcrumb>
+            <BreadcrumbItem><Link to='/home'>Home</Link></BreadcrumbItem>
+            <BreadcrumbItem active>Menu</BreadcrumbItem>
+          </Breadcrumb>
+          <div className='col-12'>
+            <h3>Menu</h3>
+            <hr />
+          </div>
+        </div>
+        <div className='row'>
+          {/*using javascript code within JSX using the {}*/}
+          {menu}
+        </div>
+      </div>
+
+    )
+  }
+
 }
 
 export default Menu
