@@ -15,7 +15,7 @@ import DishDetail from './DishdetailComponent';
 import About from './AboutComponent'
 import { connect } from 'react-redux'
 import { addComment, fetchDishes } from '../redux/ActionCreators'
-
+import { actions } from 'react-redux-form';
 
 //Main needs to take in the state from the store
 const mapStateToProps = state => {
@@ -31,7 +31,8 @@ const mapStateToProps = state => {
 //this will receive dispatch as the property here, 
 const mapDispatchToProps = (dispatch) => ({
   addComment: (dishId, rating, author, comment) => dispatch(addComment(dishId, rating, author, comment)),
-  fetchDishes: () => { dispatch(fetchDishes()) } //this allows the fetchDishes action be available to my component 
+  fetchDishes: () => { dispatch(fetchDishes()) }, //this allows the fetchDishes action be available to my component 
+  resetFeedbackForm: () => { dispatch(actions.reset('feedback')) } //the form will be names as feedback, this adds in the necessary actions from react-redux form
 })
 
 //This is a container component handling all the state and passing it onto presentational components in order for them to display
@@ -103,7 +104,7 @@ class Main extends Component {
           <Route path='/menu/:dishId' component={DishWithId}></Route>
           {/**when the above routes are not matched the user is redirected to a default page */}
           <Route exact path='/aboutus' component={() => <About leaders={this.props.leaders}></About>}></Route>
-          <Route exact path='/contactus' component={Contact}></Route>
+          <Route exact path='/contactus' component={() => <Contact resetFeedbackForm={this.props.resetFeedbackForm}></Contact>}></Route>
           <Redirect to='/home'></Redirect> {/**default redirection to home */}
         </Switch>
         <Footer></Footer>
