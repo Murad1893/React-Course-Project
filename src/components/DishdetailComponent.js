@@ -24,9 +24,10 @@ class CommentForm extends Component {
     })
   }
 
-  handleSubmit = (values) => {
-    alert('Current state is: ' + JSON.stringify(values))
-    console.log('Current state is: ' + JSON.stringify(values))
+  handleSubmit(values) {
+    this.toggleModal() //we need the modal to close after the submit
+
+    this.props.addComment(this.props.dishId, values.rating, values.author, values.comment)
   }
 
   render() {
@@ -51,9 +52,9 @@ class CommentForm extends Component {
                 </Col>
               </Row>
               <Row className="form-group">
-                <Label htmlFor="name" md={12}>Your Name</Label>
+                <Label htmlFor="author" md={12}>Your Name</Label>
                 <Col>
-                  <Control.text model=".name" id="name" name="name"
+                  <Control.text model=".author" id="author" name="author"
                     placeholder="Your Name"
                     className="form-control"
                     validators={{
@@ -111,22 +112,27 @@ function RenderDish({ dish }) {
 }
 
 //Functional components
-function RenderComments({ comments }) {
+function RenderComments({ comments, addComment, dishId }) {
   if (comments != null) {
     return (
       <div>
         <h4>Comments</h4>
-        {comments.map((comment) => {
-          var comment_date = new Date(comment.date);
-          return (
-            //you can also use this in order to parse your date 
-            //{new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', day: '2-digit'}).format(new Date(Date.parse(comment.date)))}
-            <div key={comment.id} className='list-unstyled'>
-              <p>{comment.comment}</p>
-              <p>-- {comment.author}, {comment_date.toLocaleString('default', { month: 'short' })} {comment_date.getDay()}, {comment_date.getFullYear()}</p>
-            </div>
-          )
-        })}
+        <ul className='list-unstyled'>
+          {comments.map((comment) => {
+            var comment_date = new Date(Date.parse(comment.date));
+            return (
+              //you can also use this in order to parse your date 
+              //{new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', day: '2-digit'}).format(new Date(Date.parse(comment.date)))}
+              <li key={comment.id}>
+                <p>{comment.comment}</p>
+                {/* <p>-- {comment.author}, {comment_date.toLocaleString('default', { month: 'short' })} {comment_date.getDay()}, {comment_date.getFullYear()}</p> */}
+                <p>-- {comment.author}, {new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', day: '2-digit' }).format(comment_date)} </p>
+              </li>
+            )
+          })}
+        </ul>
+        {/* passing the dishId and the addComment action to the Commentform */}
+        <CommentForm dishId={dishId} addComment={addComment} />
       </div>
     )
   }
@@ -159,8 +165,7 @@ const DishDetail = props => {
             <RenderDish dish={props.dish} />
           </div>
           <div className="col-12 col-md-5 m-1">
-            <RenderComments comments={props.comments} />
-            <CommentForm></CommentForm>
+            <RenderComments comments={props.comments} addComment={props.addComment} dishId={props.dish.id} />
           </div>
         </div>
       </div>

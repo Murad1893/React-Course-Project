@@ -15,6 +15,7 @@ import Contact from './ContactComponent'
 import DishDetail from './DishdetailComponent';
 import About from './AboutComponent'
 import { connect } from 'react-redux'
+import { addComment } from '../redux/ActionCreators'
 
 
 //Main needs to take in the state from the store
@@ -27,6 +28,11 @@ const mapStateToProps = state => {
     leaders: state.leaders
   }
 }
+
+//this will receive dispatch as the property here, 
+const mapDispatchToProps = (dispatch) => ({
+  addComment: (dishId, rating, author, comment) => dispatch(addComment(dishId, rating, author, comment))
+})
 
 //This is a container component handling all the state and passing it onto presentational components in order for them to display
 class Main extends Component {
@@ -69,8 +75,10 @@ class Main extends Component {
     const DishWithId = ({ match }) => {
       return (
         //we will receive a string here from the params and hence we will convert this into a base 10 integer
+        //this.props has been used for addComment because we have mapDisptachToProps
         <DishDetail dish={this.props.dishes.filter((dish) => dish.id === parseInt(match.params.dishId, 10))[0]}
-          comments={this.props.comments.filter((comment) => comment.dishId === parseInt(match.params.dishId, 10))}>
+          comments={this.props.comments.filter((comment) => comment.dishId === parseInt(match.params.dishId, 10))}
+          addComment={this.props.addComment}>
         </DishDetail>
       )
     }
@@ -95,5 +103,5 @@ class Main extends Component {
 }
 
 //connecting the component to our ReduxStore using the React Router (withRouter) function
-export default withRouter(connect(mapStateToProps)(Main));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Main));
 
