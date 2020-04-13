@@ -5,6 +5,7 @@ import {
 } from 'reactstrap';
 import { Link } from 'react-router-dom'
 import { Loading } from './LoadingComponent'
+import { baseUrl } from '../shared/baseUrl'
 
 //Functional Component that will render the view
 function RenderMenuItem({ dish }) {
@@ -20,18 +21,18 @@ function RenderMenuItem({ dish }) {
   </Media>
   </Media> */
   /*you can also use arrow function here if there is parameter passed to it */
-
   return (
-
-    <Card>
+    < Card >
       {/*for each corresponsing dish the corresponding link would be rendered*/}
-      <Link to={`/menu/${dish.id}`}>
-        <CardImg width='100%' src={dish.image} alt={dish.name} />
+      < Link to={`/menu/${dish.id}`
+      }>
+        {/* instead of using the images configured in our application we are using them from the json server being set up */}
+        < CardImg width='100%' src={baseUrl + dish.image} alt={dish.name} />
         <CardImgOverlay>
           <CardTitle>{dish.name}</CardTitle>
         </CardImgOverlay>
-      </Link>
-    </Card>
+      </Link >
+    </Card >
   )
 }
 

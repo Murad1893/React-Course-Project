@@ -14,7 +14,7 @@ import Contact from './ContactComponent'
 import DishDetail from './DishdetailComponent';
 import About from './AboutComponent'
 import { connect } from 'react-redux'
-import { addComment, fetchDishes } from '../redux/ActionCreators'
+import { addComment, fetchDishes, fetchComments, fetchPromos } from '../redux/ActionCreators'
 import { actions } from 'react-redux-form';
 
 //Main needs to take in the state from the store
@@ -32,7 +32,9 @@ const mapStateToProps = state => {
 const mapDispatchToProps = (dispatch) => ({
   addComment: (dishId, rating, author, comment) => dispatch(addComment(dishId, rating, author, comment)),
   fetchDishes: () => { dispatch(fetchDishes()) }, //this allows the fetchDishes action be available to my component 
-  resetFeedbackForm: () => { dispatch(actions.reset('feedback')) } //the form will be names as feedback, this adds in the necessary actions from react-redux form
+  resetFeedbackForm: () => { dispatch(actions.reset('feedback')) }, //the form will be names as feedback, this adds in the necessary actions from react-redux form
+  fetchComments: () => dispatch(fetchComments()), //fetching the comments
+  fetchPromos: () => dispatch(fetchPromos()) //fetching the promos
 })
 
 //This is a container component handling all the state and passing it onto presentational components in order for them to display
@@ -56,6 +58,9 @@ class Main extends Component {
   componentDidMount() {
     //good time for fetching the Dishes
     this.props.fetchDishes();
+    //this will ensure that when my component loads this will fetch all these from the server
+    this.props.fetchComments();
+    this.props.fetchPromos();
   }
 
   onDishSelect(dishId) {
@@ -74,7 +79,9 @@ class Main extends Component {
           dish={this.props.dishes.dishes.filter((dish) => dish.featured)[0]}
           dishesLoading={this.props.dishes.isLoading}
           dishesErrMessage={this.props.dishes.err}
-          promotion={this.props.promotions.filter((promo) => promo.featured)[0]}
+          promotion={this.props.promotions.promotions.filter((promo) => promo.featured)[0]}
+          promoLoading={this.props.promotions.isLoading}
+          promoErrMess={this.props.promotions.errMess}
           leader={this.props.leaders.filter((leader) => leader.featured)[0]}
         />
       )
@@ -88,7 +95,8 @@ class Main extends Component {
         <DishDetail dish={this.props.dishes.dishes.filter((dish) => dish.id === parseInt(match.params.dishId, 10))[0]}
           isLoading={this.props.dishes.isLoading}
           errMessage={this.props.dishes.err}
-          comments={this.props.comments.filter((comment) => comment.dishId === parseInt(match.params.dishId, 10))}
+          comments={this.props.comments.comments.filter((comment) => comment.dishId === parseInt(match.params.dishId, 10))}
+          commentsErrMess={this.props.comments.errMess}
           addComment={this.props.addComment}>
         </DishDetail>
       )
