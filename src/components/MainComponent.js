@@ -14,7 +14,7 @@ import Contact from './ContactComponent'
 import DishDetail from './DishdetailComponent';
 import About from './AboutComponent'
 import { connect } from 'react-redux'
-import { postComment, fetchDishes, fetchComments, fetchPromos } from '../redux/ActionCreators'
+import { postComment, fetchDishes, fetchComments, fetchPromos, fetchLeaders, postFeedback } from '../redux/ActionCreators'
 import { actions } from 'react-redux-form';
 import { TransitionGroup, CSSTransition } from 'react-transition-group'; //for transitions
 
@@ -32,10 +32,12 @@ const mapStateToProps = state => {
 //this will receive dispatch as the property here, 
 const mapDispatchToProps = (dispatch) => ({
   postComment: (dishId, rating, author, comment) => dispatch(postComment(dishId, rating, author, comment)),
+  postFeedback: (firstname, lastname, telnum, email, agree, contactType, message) => dispatch(postFeedback(firstname, lastname, telnum, email, agree, contactType, message)),
   fetchDishes: () => { dispatch(fetchDishes()) }, //this allows the fetchDishes action be available to my component 
   resetFeedbackForm: () => { dispatch(actions.reset('feedback')) }, //the form will be names as feedback, this adds in the necessary actions from react-redux form
   fetchComments: () => dispatch(fetchComments()), //fetching the comments
-  fetchPromos: () => dispatch(fetchPromos()) //fetching the promos
+  fetchPromos: () => dispatch(fetchPromos()), //fetching the promos
+  fetchLeaders: () => dispatch(fetchLeaders()) //fetching the leaders
 })
 
 //This is a container component handling all the state and passing it onto presentational components in order for them to display
@@ -62,6 +64,7 @@ class Main extends Component {
     //this will ensure that when my component loads this will fetch all these from the server
     this.props.fetchComments();
     this.props.fetchPromos();
+    this.props.fetchLeaders();
   }
 
   onDishSelect(dishId) {
@@ -83,7 +86,9 @@ class Main extends Component {
           promotion={this.props.promotions.promotions.filter((promo) => promo.featured)[0]}
           promoLoading={this.props.promotions.isLoading}
           promoErrMess={this.props.promotions.errMess}
-          leader={this.props.leaders.filter((leader) => leader.featured)[0]}
+          leader={this.props.leaders.leaders.filter((leader) => leader.featured)[0]}
+          leaderLoading={this.props.leaders.isLoading}
+          leaderErrMess={this.props.leaders.errMess}
         />
       )
     }
@@ -115,7 +120,7 @@ class Main extends Component {
               <Route path='/menu/:dishId' component={DishWithId}></Route>
               {/**when the above routes are not matched the user is redirected to a default page */}
               <Route exact path='/aboutus' component={() => <About leaders={this.props.leaders}></About>}></Route>
-              <Route exact path='/contactus' component={() => <Contact resetFeedbackForm={this.props.resetFeedbackForm}></Contact>}></Route>
+              <Route exact path='/contactus' component={() => <Contact resetFeedbackForm={this.props.resetFeedbackForm} postFeedback={this.props.postFeedback}></Contact>}></Route>
               <Redirect to='/home'></Redirect> {/**default redirection to home */}
             </Switch>
           </CSSTransition>

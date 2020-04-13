@@ -2,8 +2,11 @@ import React from 'react';
 import { Breadcrumb, BreadcrumbItem, Card, CardBody, CardHeader, Media } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import { baseUrl } from '../shared/baseUrl'
+import { Loading } from './LoadingComponent'
+import { Fade, Stagger } from 'react-animation-components';
 
 function RenderLeader({ leader }) {
+
     return (
         <Media tag='li'>
             <Media left middle>
@@ -20,13 +23,37 @@ function RenderLeader({ leader }) {
 
 function About(props) {
 
-    const leaders = props.leaders.map((leader) => {
-        return (
-            //don't forget the key here!
-            <div key={leader.id} className='mt-4'>
-                <RenderLeader leader={leader}></RenderLeader>
-            </div>
+    const leaderLoading = () => {
+        if (props.leaders.isLoading) {
+            return (
+                <div className='container'>
+                    <div className='row'>
+                        <Loading></Loading>
+                    </div>
+                </div>
+            )
+        }
 
+        else if (props.leaders.errMess) {
+            return (
+                <div className='container'>
+                    <div className='row'>
+                        <h4>{props.leaders.errMess}</h4>
+                    </div>
+                </div>
+            )
+        }
+        else return (null);
+    }
+
+    const leaders = props.leaders.leaders.map((leader) => {
+        return (
+            //don't forget the key here!\
+            <Fade in>
+                <div key={leader.id} className='mt-4'>
+                    <RenderLeader leader={leader}></RenderLeader>
+                </div>
+            </Fade>
         );
     });
 
@@ -70,10 +97,10 @@ function About(props) {
                         <CardBody className="bg-faded">
                             <blockquote className="blockquote">
                                 <p className="mb-0">You better cut the pizza in four pieces because
-                                    I'm not hungry enough to eat six.</p>
+                                            I'm not hungry enough to eat six.</p>
                                 <footer className="blockquote-footer">Yogi Berra,
-                                <cite title="Source Title">The Wit and Wisdom of Yogi Berra,
-                                    P. Pepe, Diversion Books, 2014</cite>
+                                        <cite title="Source Title">The Wit and Wisdom of Yogi Berra,
+                                            P. Pepe, Diversion Books, 2014</cite>
                                 </footer>
                             </blockquote>
                         </CardBody>
@@ -83,10 +110,13 @@ function About(props) {
             <div className="row row-content">
                 <div className="col-12">
                     <h2>Corporate Leadership</h2>
+                    {leaderLoading()}
                 </div>
                 <div className="col-12">
                     <Media list>
-                        {leaders}
+                        <Stagger in>
+                            {leaders}
+                        </Stagger>
                     </Media>
                 </div>
             </div>

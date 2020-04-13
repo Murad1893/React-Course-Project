@@ -121,11 +121,26 @@ function RenderDish({ dish }) {
 }
 
 //Functional components
-function RenderComments({ comments, postComment, dishId }) {
+function RenderComments({ comments, postComment, dishId, errMessage }) {
+
+  const CommentError = () => {
+    if (errMessage) {
+      return (
+        <div className='container'>
+          <div className='row'>
+            <h4>{errMessage}</h4>
+          </div>
+        </div>
+      )
+    }
+    else return (null);
+  }
+
   if (comments != null) {
     return (
       <div>
         <h4>Comments</h4>
+        {CommentError()}
         <ul className='list-unstyled'>
           <Stagger in>
             {comments.map((comment) => {
@@ -159,9 +174,6 @@ function RenderComments({ comments, postComment, dishId }) {
 const DishDetail = props => {
 
   //we are passing the isLoading and errMessage in the DishDetail component in props
-
-  console.log('DishDetail render() invoked')
-
   //so we check that whether the property is being loaded
   if (props.isLoading) {
     return (
@@ -182,36 +194,28 @@ const DishDetail = props => {
       </div>
     )
   }
-
-  else if (props.dish != null) {
-    return (
-      <div className='container'>
-        <div className='row'>
-          <Breadcrumb>
-            <BreadcrumbItem><Link to='/menu'>Menu</Link></BreadcrumbItem>
-            <BreadcrumbItem active>{props.dish.name}</BreadcrumbItem>
-          </Breadcrumb>
-          <div className='col-12'>
-            <h3>{props.dish.name}</h3>
-            <hr />
-          </div>
-        </div>
-        <div className='row'>
-          <div className="col-12 col-md-5 m-1">
-            <RenderDish dish={props.dish} />
-          </div>
-          <div className="col-12 col-md-5 m-1">
-            <RenderComments comments={props.comments} postComment={props.postComment} dishId={props.dish.id} />
-          </div>
+  return (
+    <div className='container'>
+      <div className='row'>
+        <Breadcrumb>
+          <BreadcrumbItem><Link to='/menu'>Menu</Link></BreadcrumbItem>
+          <BreadcrumbItem active>{props.dish.name}</BreadcrumbItem>
+        </Breadcrumb>
+        <div className='col-12'>
+          <h3>{props.dish.name}</h3>
+          <hr />
         </div>
       </div>
-    )
-  }
-  else {
-    return (
-      <div></div>
-    )
-  }
+      <div className='row'>
+        <div className="col-12 col-md-5 m-1">
+          <RenderDish dish={props.dish} />
+        </div>
+        <div className="col-12 col-md-5 m-1">
+          <RenderComments comments={props.comments} postComment={props.postComment} dishId={props.dish.id} errMessage={props.commentsErrMess} />
+        </div>
+      </div>
+    </div>
+  )
 }
 
 export default DishDetail

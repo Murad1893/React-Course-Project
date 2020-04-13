@@ -37,8 +37,32 @@ function RenderMenuItem({ dish }) {
 }
 
 //another way to define a functional component
-
 const Menu = (props) => {
+
+  const menuLoading = () => {
+    if (props.dishes.isLoading) {
+      return (
+        <div className='container'>
+          <div className='row'>
+            <Loading></Loading>
+          </div>
+        </div>
+      )
+    }
+
+    else if (props.dishes.errMess) {
+      return (
+        <div className='container'>
+          <div className='row'>
+            <h4>{props.dishes.errMess}</h4>
+          </div>
+        </div>
+      )
+    }
+
+    else return (null);
+  }
+
   //when we want to refer any value from the state, we can use this.state
   const menu = props.dishes.dishes.map(dish => { //now as this is a functional component we can now use props instead of this.props
     //iterating over the javascript object
@@ -52,48 +76,26 @@ const Menu = (props) => {
     )
   });
 
-  if (props.dishes.isLoading) {
-    return (
-      <div className='container'>
-        <div className='row'>
-          <Loading></Loading>
+  return (
+    <div className="container" >
+      <div className='row'>
+        <Breadcrumb>
+          <BreadcrumbItem><Link to='/home'>Home</Link></BreadcrumbItem>
+          <BreadcrumbItem active>Menu</BreadcrumbItem>
+        </Breadcrumb>
+        <div className='col-12'>
+          <h3>Menu</h3>
+          <hr />
+          {menuLoading()}
         </div>
       </div>
-    )
-  }
-
-  else if (props.dishes.errMessage) {
-    return (
-      <div className='container'>
-        <div className='row'>
-          <h4>{props.errMessage}</h4>
-        </div>
+      <div className='row'>
+        {/*using javascript code within JSX using the {}*/}
+        {menu}
       </div>
-    )
-  }
+    </div>
 
-  else {
-    return (
-      <div className="container" >
-        <div className='row'>
-          <Breadcrumb>
-            <BreadcrumbItem><Link to='/home'>Home</Link></BreadcrumbItem>
-            <BreadcrumbItem active>Menu</BreadcrumbItem>
-          </Breadcrumb>
-          <div className='col-12'>
-            <h3>Menu</h3>
-            <hr />
-          </div>
-        </div>
-        <div className='row'>
-          {/*using javascript code within JSX using the {}*/}
-          {menu}
-        </div>
-      </div>
-
-    )
-  }
-
+  )
 }
 
 export default Menu

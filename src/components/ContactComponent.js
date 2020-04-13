@@ -24,7 +24,7 @@ class Contact extends Component {
   //instead of bind you can also do like this
   handleSubmit = (values) => {
     //whenever we submit a form we need to remove the default behaviour of the submit hence we do this here
-    alert('Current state is: ' + JSON.stringify(values))
+    this.props.postFeedback(values.firstname, values.lastname, values.telnum, values.email, values.agree, values.contactType, values.message);
     this.props.resetFeedbackForm();
   }
 
