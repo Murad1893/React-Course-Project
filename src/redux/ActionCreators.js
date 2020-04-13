@@ -1,13 +1,6 @@
 import * as ActionTypes from './ActionTypes' //importing all action types
 import { baseUrl } from '../shared/baseUrl'; //getting the baseUrl from here
 
-//this will return an action js object
-export const addComment = (dishId, rating, author, comment) => ({
-  type: ActionTypes.ADD_COMMENT,
-  payload: { //all the 4 paramters will be part of the payload hence sent 
-    dishId, rating, author, comment
-  }
-})
 
 //DISHES
 
@@ -25,8 +18,22 @@ export const fetchDishes = () => (dispatch) => {
   //the previous was done as a simulation of fetching the dishes.
   //NOW WE WILL USE FETCH API to fetch from the json server and then dispatch the action
   return fetch(baseUrl + 'dishes')
-    .then(res => res.json())
-    .then(data => dispatch(addDishes(data))) //after the res.json is loaded we now have this collection of objects in dishes
+    .then(response => {
+      if (response.ok) {//if the res is ok
+        return response;
+      } else {//if err occurs
+        var error = new Error('Error ' + response.status + ': ' + response.statusText);
+        error.response = response;
+        throw error;
+      }
+    },
+      error => {//in case the promise does not load or throws an err
+        var errmess = new Error(error.message);
+        throw errmess;
+      })
+    .then(response => response.json())
+    .then(dishes => dispatch(addDishes(dishes))) //after the res.json is loaded we now have this collection of objects in dishes
+    .catch(error => dispatch(dishesFailed(error.message)));//dispatching the err
 }
 
 
@@ -50,9 +57,24 @@ export const addDishes = (dishes) => ({
 //COMMENTS
 export const fetchComments = () => (dispatch) => {
   return fetch(baseUrl + 'comments')
+    .then(response => {
+      if (response.ok) {
+        return response;
+      } else {
+        var error = new Error('Error ' + response.status + ': ' + response.statusText);
+        error.response = response;
+        throw error;
+      }
+    },
+      error => {
+        var errmess = new Error(error.message);
+        throw errmess;
+      })
     .then(response => response.json())
-    .then(comments => dispatch(addComments(comments)));
+    .then(comments => dispatch(addComments(comments)))
+    .catch(error => dispatch(commentsFailed(error.message)));
 };
+
 
 export const commentsFailed = (errmess) => ({
   type: ActionTypes.COMMENTS_FAILED,
@@ -64,14 +86,66 @@ export const addComments = (comments) => ({
   payload: comments
 });
 
+
+//this will return an action js object
+export const addComment = (comment) => ({
+  type: ActionTypes.ADD_COMMENT,
+  payload: comment
+});
+
+export const postComment = (dishId, rating, author, comment) => (dispatch) => {
+
+  const newComment = { dishId, rating, author, comment };
+
+  newComment.date = new Date().toISOString();
+
+  return fetch(baseUrl + 'comments', {
+    method: "POST",
+    body: JSON.stringify(newComment),
+    headers: {
+      "Content-Type": "application/json"
+    },
+    credentials: "same-origin"
+  })
+    .then(response => {
+      if (response.ok) {
+        return response;
+      } else {
+        var error = new Error('Error ' + response.status + ': ' + response.statusText);
+        error.response = response;
+        throw error;
+      }
+    },
+      error => {
+        throw error;
+      })
+    .then(response => response.json())
+    .then(response => dispatch(addComment(response)))
+    .catch(error => { console.log('post comments', error.message); alert('Your comment could not be posted\nError: ' + error.message); });
+};
+
 //PROMOTIONS
 export const fetchPromos = () => (dispatch) => {
 
   dispatch(promosLoading());
 
   return fetch(baseUrl + 'promotions')
+    .then(response => {
+      if (response.ok) {
+        return response;
+      } else {
+        var error = new Error('Error ' + response.status + ': ' + response.statusText);
+        error.response = response;
+        throw error;
+      }
+    },
+      error => {
+        var errmess = new Error(error.message);
+        throw errmess;
+      })
     .then(response => response.json())
-    .then(promos => dispatch(addPromos(promos)));
+    .then(promos => dispatch(addPromos(promos)))
+    .catch(error => dispatch(promosFailed(error.message)));
 }
 
 export const promosLoading = () => ({

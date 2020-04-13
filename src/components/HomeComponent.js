@@ -38,7 +38,7 @@ export default function HomeComponent(props) {
           <RenderCard item={props.dish} isLoading={props.dishesLoading} errMessage={props.dishesErrMessage} />
         </div>
         <div className='col-12 col-md md-1'>
-          <RenderCard item={props.promotion} isLoading={props.promosLoading} errMessage={props.promosErrMessage} />
+          <RenderCard item={props.promotion} isLoading={props.promoLoading} errMessage={props.promoErrMess} />
         </div>
         <div className='col-12 col-md md-1'>
           <RenderCard item={props.leader} />
