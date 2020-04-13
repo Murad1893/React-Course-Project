@@ -52,8 +52,6 @@ const Menu = (props) => {
     )
   });
 
-  console.log('Menu component render is invoked!')
-
   if (props.dishes.isLoading) {
     return (
       <div className='container'>

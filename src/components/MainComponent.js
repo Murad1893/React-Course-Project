@@ -16,6 +16,7 @@ import About from './AboutComponent'
 import { connect } from 'react-redux'
 import { postComment, fetchDishes, fetchComments, fetchPromos } from '../redux/ActionCreators'
 import { actions } from 'react-redux-form';
+import { TransitionGroup, CSSTransition } from 'react-transition-group'; //for transitions
 
 //Main needs to take in the state from the store
 const mapStateToProps = state => {
@@ -105,16 +106,20 @@ class Main extends Component {
     return (
       <div>
         <Header></Header>
-        <Switch> {/**using the switch to switch between routes*/}
-          <Route path='/home' component={HomePage} />
-          {/**if we want to pass some props a component we must send it using an arrow function */}
-          <Route exact path='/menu' component={() => <Menu dishes={this.props.dishes}></Menu>} /> {/**here route should match the exact pathname */}
-          <Route path='/menu/:dishId' component={DishWithId}></Route>
-          {/**when the above routes are not matched the user is redirected to a default page */}
-          <Route exact path='/aboutus' component={() => <About leaders={this.props.leaders}></About>}></Route>
-          <Route exact path='/contactus' component={() => <Contact resetFeedbackForm={this.props.resetFeedbackForm}></Contact>}></Route>
-          <Redirect to='/home'></Redirect> {/**default redirection to home */}
-        </Switch>
+        <TransitionGroup>
+          <CSSTransition key={this.props.location.key} classNames="page" timeout={300}>
+            <Switch> {/**using the switch to switch between routes*/}
+              <Route path='/home' component={HomePage} />
+              {/**if we want to pass some props a component we must send it using an arrow function */}
+              <Route exact path='/menu' component={() => <Menu dishes={this.props.dishes}></Menu>} /> {/**here route should match the exact pathname */}
+              <Route path='/menu/:dishId' component={DishWithId}></Route>
+              {/**when the above routes are not matched the user is redirected to a default page */}
+              <Route exact path='/aboutus' component={() => <About leaders={this.props.leaders}></About>}></Route>
+              <Route exact path='/contactus' component={() => <Contact resetFeedbackForm={this.props.resetFeedbackForm}></Contact>}></Route>
+              <Redirect to='/home'></Redirect> {/**default redirection to home */}
+            </Switch>
+          </CSSTransition>
+        </TransitionGroup>
         <Footer></Footer>
       </div>
     )
